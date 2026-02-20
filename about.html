@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Xinta Yang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            yellow: '#FDC435',
+                            "yellow-dark": '#D9A31A',
+                            dark: '#25282B',
+                            gray: '#828282',
+                            lightgray: '#8282829A',
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .section-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .education-dot::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #FDC435;
+            border: 3px solid white;
+            box-shadow: 0 0 0 4px rgba(253, 196, 53, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-[#F5F5F4] font-sans text-[#25282B] min-h-screen p-6 md:p-20 selection:bg-brand-yellow selection:text-white">
+
+<div class="max-w-7xl mx-auto mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <header class="text-center md:text-left">
+        <a href="index.html"
+           onclick="if(history.length > 1) { history.back(); return false; }"
+           class="text-[#D9A31A] font-bold hover:opacity-80 transition-opacity">
+            ← Back to Homepage
+        </a>
+        <h1 class="font-serif text-5xl mt-4 tracking-tight">About Me</h1>
+    </header>
+</div>
+
+<main class="max-w-7xl mx-auto pb-24">
+
+    <section class="section-fade-in mb-24">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div class="lg:col-span-7">
+                <p class="text-[18px] text-brand-gray leading-relaxed mb-6">
+                    I am a graduate student in the <span class="text-[#25282B] font-semibold">Department of Statistics</span> at the University of Wisconsin-Madison.
+                    I experienced different things before reaching my current study agenda. I jumped among classes in Mathematics, Computer Science and Physics during my undergraduate years.
+                    And it took me quite some time even in grad-school to narrow down my focus.
+                </p>
+                <p class="text-[18px] text-brand-gray leading-relaxed">
+                    I am glad to find something I love and fortunate to be advised by <span class="text-[#25282B] font-semibold">Prof. Quintos, Alejandra.</span>
+                </p>
+            </div>
+            <div class="lg:col-span-5 bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 h-fit">
+                <h3 class="text-[12px] uppercase tracking-[0.3em] font-extrabold text-brand-yellow-dark mb-4">Current Focus</h3>
+                <ul class="space-y-3 font-medium text-sm">
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full"></span> Stochastic Control Applications</li>
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full"></span> <span class="text-brand-lightgray">More to come...</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-fade-in grid grid-cols-1 md:grid-cols-2 gap-16">
+        <div>
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-10 h-[2px] bg-brand-yellow"></div>
+                <h2 class="font-serif text-3xl">Education</h2>
+            </div>
+            <div class="ml-8 border-l-2 border-gray-100 pl-8 space-y-12 relative">
+                <div class="relative education-dot">
+                    <h4 class="font-bold text-lg leading-snug">PhD in Statistics</h4>
+                    <p class="text-brand-gray text-sm italic mb-1">Minor in Computer Science & Mathematics</p>
+                    <p class="text-brand-yellow-dark font-bold text-sm uppercase tracking-wider">UW-Madison</p>
+                    <p class="text-brand-gray text-[13px] mt-1 font-medium">Ongoing</p>
+                </div>
+                <div class="relative education-dot">
+                    <h4 class="font-bold text-lg leading-snug">BS in Mathematics & Computer Science</h4>
+                    <p class="text-brand-yellow-dark font-bold text-sm uppercase tracking-wider">UC Los Angeles (UCLA)</p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-10 h-[2px] bg-brand-yellow"></div>
+                <h2 class="font-serif text-3xl">Beyond Academia</h2>
+            </div>
+            <div class="space-y-6 text-brand-gray leading-relaxed text-[17px]">
+                <p>
+                    I enjoy exploring food from around the world. I used to play violin and tennis. When I don't want to do things, I listen to music.
+                </p>
+                <p>
+                    I listen to classical, traditional Chinese and country/folk songs, plus Chinese pop music from the 80s and 90s (yes, I probably have an "old person's" taste.)
+                </p>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
