@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xinta Yang | UW-Madison Statistics</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            yellow: '#FDC435',
+                            "yellow-dark": '#D9A31A',
+                            dark: '#25282B',
+                            gray: '#828282',
+                            lightgray: "#8282829A"
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+
+        /* Robust hiding for backdrop filters */
+        .hidden-element {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+        .visible-element {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        #mobile-menu-container {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s linear;
+        }
+        .menu-closed { transform: translateY(-10px) scale(0.95); opacity: 0; pointer-events: none; }
+        .menu-open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+
+        .form-glow:focus-within {
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.15);
+        }
+
+        .portrait-blob {
+            border-radius: 45% 55% 55% 45% / 45% 45% 55% 55%;
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .portrait-blob:hover {
+            border-radius: 55% 45% 45% 55% / 55% 55% 45% 45%;
+        }
+
+        .announcement-card {
+            position: sticky;
+            transition: transform 0.4s ease;
+            transform-origin: top center;
+        }
+        .announcement-card:not(:last-child) {
+            margin-bottom: 1.5rem;
+        }
+
+        #message-input {
+            line-height: 1.5rem;
+            /* Initial height for 6 lines */
+            min-height: calc(1.5rem * 6);
+            /* Maximum height before scrolling starts */
+            max-height: calc(1.5rem * 10);
+            overflow-y: auto;
+            /* Optional: ensures a smooth height transition */
+            transition: height 0.1s ease;
+        }
+
+        /* Ensure the scrollbar doesn't clutter the clean design */
+        #message-input::-webkit-scrollbar {
+            width: 4px;
+        }
+        #message-input::-webkit-scrollbar-thumb {
+            background: #8282824D; /* subtle gray */
+            border-radius: 10px;
+        }
+        #message-input::placeholder {
+            color: #cccccc; /* A light gray hex code */
+            opacity: 1;      /* Ensures the color isn't faded by browser defaults */
+        }
+        #email-input::placeholder {
+            color: #cccccc; /* A light gray hex code */
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen bg-[#F5F5F4] overflow-x-hidden font-sans text-brand-dark flex flex-col selection:bg-brand-yellow selection:text-white">
+
+<div class="absolute -top-20 -left-20 w-96 h-96 bg-brand-yellow/15 rounded-full blur-[100px] -z-10"></div>
+
+<div id="menu-backdrop" class="fixed inset-0 z-[50] bg-white/10 backdrop-blur-md hidden-element transition-all duration-500"></div>
+
+<header class="relative w-full px-8 md:px-16 lg:px-24 xl:px-40 2xl:px-60 py-12 flex justify-between items-center z-[60]">
+    <div class="font-bold text-[22px] tracking-tight cursor-default">Xinta Yang</div>
+
+    <nav class="hidden md:flex gap-10 font-semibold text-[16px]">
+        <a href="#about" class="relative group py-1">About<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-brand-yellow transition-all duration-300 group-hover:w-full"></span></a>
+        <a href="#course-notes" class="relative group py-1">Course Notes<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-brand-yellow transition-all duration-300 group-hover:w-full"></span></a>
+        <button id="contact-trigger" class="relative group py-1 text-brand-yellow-dark">Contact<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-brand-yellow transition-all duration-300 group-hover:w-full"></span></button>
+    </nav>
+
+    <button id="mobile-menu-btn" class="md:hidden text-brand-dark focus:outline-none p-2 relative z-[70]">
+        <div id="hamburger-icon" class="space-y-1.5">
+            <span class="block w-6 h-0.5 bg-brand-dark transition-all duration-300 origin-center" id="line1"></span>
+            <span class="block w-6 h-0.5 bg-brand-dark transition-all duration-300" id="line2"></span>
+            <span class="block w-6 h-0.5 bg-brand-dark transition-all duration-300 origin-center" id="line3"></span>
+        </div>
+    </button>
+
+    <div id="mobile-menu-container" class="menu-closed absolute top-20 right-8 w-44 bg-white rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-5 flex flex-col gap-4 md:hidden z-[60] border border-gray-50">
+        <a href="#about" class="mobile-link text-[15px] font-medium text-brand-dark border-b border-gray-50 pb-2">About</a>
+        <a href="#course-notes" class="mobile-link text-[15px] font-medium text-brand-dark border-b border-gray-50 pb-2">Course Notes</a>
+        <button id="mobile-contact-trigger" class="mobile-link text-[15px] font-medium text-brand-yellow-dark text-left">Contact</button>
+    </div>
+</header>
+
+<main class="w-full px-8 md:px-16 lg:px-24 xl:px-40 2xl:px-60 flex-grow flex flex-row items-start justify-between gap-12 lg:gap-20 relative pt-20 md:pt-28 pb-20">
+    <div class="w-full md:w-[55%] lg:w-[50%] flex flex-col">
+        <span class="text-brand-yellow-dark font-extrabold text-[12px] tracking-[0.3em] uppercase mb-4">UW-Madison Statistics</span>
+        <div class="w-10 h-1 bg-brand-yellow-dark mb-6 rounded-full"></div>
+
+        <h1 class="font-serif text-[44px] sm:text-[54px] lg:text-[64px] font-bold leading-[1.1] text-brand-dark mb-4 md:mb-6 tracking-tight">Welcome to my site!</h1>
+        <p class="text-brand-gray text-[18px] leading-[1.6] max-w-[480px] mb-8">
+            I am a graduate student from the Statistics department at University of Wisconsin - Madison. My current study agenda is the application of <span class="text-brand-dark font-semibold">stochastic control</span>.
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+            <a href="posts.html" class="bg-brand-yellow text-brand-dark font-bold text-[16px] px-8 py-2.5 rounded-[6px] hover:brightness-105 shadow-md transition-all active:scale-95 text-center">View Posts</a>
+        </div>
+    </div>
+
+    <div class="hidden md:flex md:w-[45%] flex-col items-end">
+        <div class="relative flex flex-col items-end w-full">
+            <div id="portrait-container" class="portrait-blob overflow-hidden shadow-2xl md:translate-x-6 bg-white/20 backdrop-blur-sm 2xl:max-w-lg">
+                <img id="portrait-img" src="./images/id.png" alt="Portrait" class="max-h-[45vh] md:max-h-[55vh] w-auto h-auto object-cover">
+            </div>
+            <p class="text-brand-gray text-[9px] mt-4 mr-4 font-medium uppercase tracking-[0.2em] opacity-60">
+                Gemini AI Transformed Picture of Me
+            </p>
+        </div>
+    </div>
+</main>
+
+<div class="w-full flex items-center justify-center py-24 px-8">
+    <div class="flex-grow max-w-[150px] h-[2px] bg-gradient-to-r from-transparent to-brand-yellow/40"></div>
+    <span class="mx-8 text-brand-yellow-dark font-extrabold text-[12px] tracking-[0.3em] uppercase">Announcements</span>
+    <div class="flex-grow max-w-[150px] h-[2px] bg-gradient-to-l from-transparent to-brand-yellow/40"></div>
+</div>
+
+<section id="announcements" class="w-full px-8 md:px-16 lg:px-24 xl:px-40 2xl:px-60 pb-40 flex justify-center">
+    <div id="announcement-list" class="w-full flex flex-col items-center"></div>
+</section>
+
+<div class="w-full flex justify-center pb-12">
+    <img
+            src="/images/school-logo.png"
+            alt="School Logo"
+            class="h-16 md:h-20 w-auto object-contain"
+    >
+</div>
+
+<div id="contact-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-brand-dark/20 backdrop-blur-sm hidden-element p-6">
+    <div id="modal-overlay" class="absolute inset-0"></div>
+    <div class="relative w-full max-w-[500px]">
+        <form id="contact-form" action="https://formspree.io/f/mqeddezv" method="POST" class="w-full">
+            <div class="form-glow w-full bg-white rounded-[2.2rem] shadow-[0_30px_70px_rgba(0,0,0,0.15)] border border-white transition-all duration-500 overflow-hidden">
+                <div class="flex items-center justify-end px-8 pt-6">
+                    <button type="button" id="close-modal" class="text-brand-gray hover:text-brand-dark transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <input type="text" name="_gotcha" style="display:none" />
+
+                <div class="flex items-center px-8 pt-4 pb-1">
+                    <span class="text-[9px] uppercase tracking-[0.4em] font-bold text-brand-yellow-dark/70 mr-6 w-12 shrink-0">From</span>
+                    <input type="email" name="email" id="email-input" placeholder="your@email.com" required class="flex-1 bg-transparent py-2 focus:outline-none font-semibold text-sm">
+                </div>
+
+                <div class="mx-8 mt-1 mb-6 h-[1px] bg-gradient-to-r from-transparent via-brand-yellow/20 to-transparent"></div>
+                <div class="relative flex flex-col px-8 pb-8 min-h-[200px]">
+                    <span class="text-[9px] uppercase tracking-[0.4em] font-bold text-brand-yellow-dark/70 mb-4">Message</span>
+                    <textarea id="message-input" name="message" placeholder="(Study / Project) related (discussions / inquiries)&#10;&#10;(If message fails to send, my mailbox is likely flooded.&#10; Please manually send me an email instead.)&#10;&#10;Wish you a wonderful day!" required class="w-full bg-transparent focus:outline-none font-medium text-sm leading-relaxed resize-none flex-grow"></textarea>
+                    <div class="flex items-center justify-between mt-6">
+                        <p id="status-msg" class="text-[10px] font-bold uppercase text-brand-yellow-dark opacity-0 transition-opacity">Sent successfully</p>
+                        <button type="submit" id="send-btn" class="h-12 px-6 bg-brand-yellow text-brand-dark font-bold rounded-full transition-all flex items-center gap-3 hover:shadow-lg active:scale-95 group">
+                            <span>Send</span>
+                            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    /* UI / Modal JS */
+    const contactModal = document.getElementById('contact-modal');
+    const contactTrigger = document.getElementById('contact-trigger');
+    const mobileContactTrigger = document.getElementById('mobile-contact-trigger');
+    const closeModal = document.getElementById('close-modal');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const menuBackdrop = document.getElementById('menu-backdrop');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuContainer = document.getElementById('mobile-menu-container');
+    const line1 = document.getElementById('line1');
+    const line2 = document.getElementById('line2');
+    const line3 = document.getElementById('line3');
+
+    function openModal() {
+        contactModal.classList.replace('hidden-element', 'visible-element');
+        document.body.style.overflow = 'hidden';
+        closeMobileMenu();
+    }
+
+    function hideModal() {
+        contactModal.classList.replace('visible-element', 'hidden-element');
+        document.body.style.overflow = '';
+    }
+
+    contactTrigger.addEventListener('click', openModal);
+    mobileContactTrigger.addEventListener('click', openModal);
+    closeModal.addEventListener('click', hideModal);
+    modalOverlay.addEventListener('click', hideModal);
+
+    function toggleMobileMenu() { if (!mobileMenuContainer.classList.contains('menu-open')) openMobileMenu(); else closeMobileMenu(); }
+
+    function openMobileMenu() {
+        mobileMenuContainer.classList.replace('menu-closed', 'menu-open');
+        menuBackdrop.classList.replace('hidden-element', 'visible-element');
+        line1.style.transform = "translateY(8px) rotate(45deg)"; line2.style.opacity = "0"; line3.style.transform = "translateY(-8px) rotate(-45deg)";
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        mobileMenuContainer.classList.replace('menu-open', 'menu-closed');
+        menuBackdrop.classList.replace('visible-element', 'hidden-element');
+        line1.style.transform = "translateY(0) rotate(0)"; line2.style.opacity = "1"; line3.style.transform = "translateY(0) rotate(0)";
+        document.body.style.overflow = '';
+    }
+
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    menuBackdrop.addEventListener('click', closeMobileMenu);
+
+    const textarea = document.getElementById('message-input');
+    textarea.addEventListener('input', function() {
+        // Reset to auto so it can shrink if text is deleted
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+    window.addEventListener('DOMContentLoaded', () => {
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    });
+
+    const contactForm = document.getElementById('contact-form');
+    const sendBtn = document.getElementById('send-btn');
+    const statusMsg = document.getElementById('status-msg');
+
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const emailValue = document.getElementById('email-input').value;
+        const messageValue = document.getElementById('message-input').value;
+        const gotchaValue = contactForm.querySelector('input[name="_gotcha"]').value;
+
+        // 1. Initial UI State: Sending
+        const originalBtnContent = sendBtn.innerHTML;
+        const originalBtnClasses = sendBtn.className;
+
+        sendBtn.innerHTML = `<span>Sending...</span>`;
+        sendBtn.disabled = true;
+        statusMsg.classList.add('opacity-0');
+
+        const data = new FormData();
+        data.append('email', emailValue);
+        data.append('message', messageValue);
+        data.append('_gotcha', gotchaValue);
+
+        try {
+            const response = await fetch(contactForm.action, {
+                method: 'POST',
+                body: data,
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (response.ok) {
+                // 2. SUCCESS STATE: Comforting Green Theme
+
+                // Left Status Message: Change to green and show
+                statusMsg.innerText = "Message Sent";
+                statusMsg.classList.remove('text-red-500', 'text-brand-yellow-dark', 'opacity-0');
+                statusMsg.classList.add('text-green-600'); // Comforting green
+
+                // Button: Change to green circle with checkmark
+                sendBtn.classList.remove('bg-brand-yellow');
+                sendBtn.classList.add('bg-green-500', 'text-white');
+                sendBtn.innerHTML = `
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+            `;
+
+                // 3. Close and Reset after 2 seconds
+                setTimeout(() => {
+                    hideModal();
+                    setTimeout(() => {
+                        // Reset form and UI states for next open
+                        contactForm.reset();
+                        textarea.style.height = 'auto';
+                        sendBtn.innerHTML = originalBtnContent;
+                        sendBtn.className = originalBtnClasses;
+                        sendBtn.disabled = false;
+                        statusMsg.classList.add('opacity-0');
+                        // Clean up color classes for next time
+                        statusMsg.classList.remove('text-green-600');
+                    }, 500);
+                }, 2000);
+
+            } else {
+                throw new Error();
+            }
+        } catch (err) {
+            // 4. FAILURE STATE: Revert and show error in red
+            sendBtn.innerHTML = originalBtnContent;
+            sendBtn.disabled = false;
+
+            statusMsg.innerText = "Message Failed to Deliver";
+            statusMsg.classList.remove('text-green-600', 'text-brand-yellow-dark');
+            statusMsg.classList.add('text-red-500');
+            statusMsg.classList.remove('opacity-0');
+
+            // Auto-hide error after 4 seconds
+            setTimeout(() => {
+                statusMsg.classList.add('opacity-0');
+            }, 3000);
+        }
+    });
+
+    /* Announcement Parser */
+    const announcementFiles = ['news1.txt'];
+
+    async function loadAnnouncements() {
+        const container = document.getElementById('announcement-list');
+        for (let i = 0; i < announcementFiles.length; i++) {
+            try {
+                const response = await fetch(`/announcements/${announcementFiles[i]}`);
+                const rawText = await response.text();
+
+                const getValue = (key) => {
+                    const regex = new RegExp(`-${key}:\\s*([\\s\\S]*?)(?=-\\w+:|$)`, 'i');
+                    const match = rawText.match(regex);
+                    return match ? match[1].trim() : null;
+                };
+
+                const title = getValue('title') || "Update";
+                const content = getValue('content') || "";
+                const link = getValue('link');
+                const image = getValue('image');
+
+                const card = document.createElement('div');
+                card.className = "announcement-card w-full max-w-5xl bg-white rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-white/60 overflow-hidden grid grid-cols-1 md:grid-cols-2";
+                card.style.top = `${100 + (i * 20)}px`;
+                card.style.zIndex = i + 1;
+
+                card.innerHTML = `
+                    <div class="p-8 md:p-14 flex flex-col justify-between h-full">
+                        <div>
+                            <div class="flex items-center gap-4 mb-8">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
+                                <span class="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-yellow-dark">Bulletin 0${i+1}</span>
+                            </div>
+                            <h3 class="font-serif text-3xl md:text-4xl font-bold mb-6 text-brand-dark leading-tight">${title}</h3>
+                            <p class="text-brand-gray leading-relaxed text-base md:text-lg">${content.replace(/\n/g, '<br>')}</p>
+                        </div>
+                        ${link ? `
+                        <div class="mt-12">
+                            <a href="${link}" class="group flex items-center gap-3 text-brand-dark font-bold text-sm">
+                                More Details
+                                <div class="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-brand-yellow group-hover:border-brand-yellow transition-all">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </div>
+                            </a>
+                        </div>` : ''}
+                    </div>
+                    <div class="hidden md:block relative min-h-[320px] md:min-h-full bg-brand-yellow/[0.03]">
+                        ${image ? `<img src="${image}" alt="${title}" class="absolute inset-0 w-full h-full object-cover">` :
+                    `<div class="absolute inset-0 flex items-center justify-center opacity-[0.05]">
+                            <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-1.96-2.36L6.5 17h11l-3.54-4.71z"/></svg>
+                        </div>`}
+                    </div>`;
+                container.appendChild(card);
+            } catch (e) { console.warn("Parser error:", announcementFiles[i]); }
+        }
+    }
+    loadAnnouncements();
+</script>
+</body>
+</html>

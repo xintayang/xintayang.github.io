@@ -1,0 +1,4 @@
+-title: New Paper
+-content: Our paper "Group Survival Probability under Contagion in Microlending" is accepted to Annals of Finance.
+-link: post-detail.html?post=group-contagion.md
+-image: ./images/news1.png

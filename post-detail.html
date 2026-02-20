@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Detail | Xinta Yang</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+    window.MathJax = {
+      loader: {
+        // Loads common packages: ams, physics, and color
+        load: ['[tex]/ams', '[tex]/physics', '[tex]/color', '[tex]/configMacros']
+      },
+      tex: {
+        packages: {'[+]': ['ams', 'physics', 'color', 'configMacros']}, // Enables them
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$']],
+        macros: {
+          bm: ["{\\boldsymbol{#1}}", 1],
+
+          // Optimization Operators
+          argmin: "\\operatorname*{arg\\,min}",
+          argmax: "\\operatorname*{arg\\,max}",
+
+          // Independence Symbol (compact \perp\perp)
+          indep: "{\\perp\\!\\!\\!\\perp}",
+
+          // Common shortcuts for your field
+          E: "{\\mathbb{E}}",
+          P: "{\\mathbb{P}}",
+          R: "{\\mathbb{R}}",
+          Q: "{\\mathbb{Q}}",
+        },
+        processEscapes: true,
+        // Optional: Number your equations automatically
+        tags: 'ams'
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+
+  <style>
+    .prose h1, .prose h2, .prose h3 { font-family: 'Playfair Display', serif; color: #25282B; }
+    .prose p { margin-bottom: 1.5rem; line-height: 1.8; color: #4A4A4A; }
+    /* Centered Abstract Style */
+    .abstract {
+      max-width: 85%;
+      margin: 0 auto 3rem auto;
+      text-align: center;
+      font-style: italic;
+      color: #828282; /* brand-gray */
+      line-height: 1.6;
+      font-size: 1.1rem;
+    }
+    /* Target links specifically inside the rendered markdown article */
+    .prose a {
+      color: #D9A31A; /* Using your brand-yellow-dark */
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: all 0.2s ease;
+    }
+    .prose a:hover {
+      color: #FDC435; /* Brighter yellow on hover */
+      text-decoration-thickness: 2px;
+    }
+    /* Style for the PDF "work" link specifically if you want it distinct */
+    .prose a[href$=".pdf"]::after {
+      content: " 📄"; /* Adds a small PDF icon after the link text */
+      font-size: 0.8em;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="bg-[#F5F5F4] font-sans text-[#25282B] min-h-screen">
+
+<nav class="p-8 md:px-24">
+  <a href="javascript:history.back()"
+     onclick="if(history.length > 1) { history.back(); return false; }"
+     class="text-[#828282] hover:text-[#25282B] font-bold text-sm tracking-widest uppercase transition-colors">
+    ← Back
+  </a>
+</nav>
+
+<main class="max-w-4xl mx-auto bg-white min-h-screen shadow-sm border-x border-gray-100 p-8 md:p-20">
+  <header class="mb-10 text-center">
+    <h1 id="post-title" class="font-serif text-4xl md:text-5xl font-bold mb-4 leading-tight">
+      Loading...
+    </h1>
+    <p id="post-date" class="text-[#D9A31A] font-extrabold text-xs tracking-[0.3em] uppercase mb-8">
+      ---
+    </p>
+
+    <div id="post-excerpt" class="abstract">
+    </div>
+
+    <div class="w-24 h-px bg-gray-200 mx-auto"></div>
+  </header>
+
+  <article id="post-content" class="prose prose-lg max-w-none">
+  </article>
+</main>
+
+<script>
+  async function loadAndRenderPost() {
+    const params = new URLSearchParams(window.location.search);
+    const fileName = params.get('post');
+
+    if (!fileName) return;
+
+    try {
+      const response = await fetch(`./posts/${fileName}`);
+      const rawText = await response.text();
+
+      // 1. Metadata and Body Extraction
+      const title = rawText.match(/title:\s*(.*)/)?.[1]?.replace(/['"]/g, '') || "Untitled";
+      const date = rawText.match(/date:\s*(.*)/)?.[1]?.split(' ')[0] || "";
+      const excerptMatch = rawText.match(/excerpt:\s*([\s\S]*?)(?=\n\S|---)/);
+      const excerpt = excerptMatch ? excerptMatch[1].trim() : "";
+      const bodyContent = rawText.replace(/^---[\s\S]*?---/, '').trim();
+
+      // 2. Render Markdown to HTML
+      document.getElementById('post-title').innerText = title;
+      document.getElementById('post-date').innerText = date;
+      document.getElementById('post-excerpt').innerText = excerpt;
+
+      // Render the body into the content area
+      const contentArea = document.getElementById('post-content');
+      contentArea.innerHTML = marked.parse(bodyContent);
+
+      // 3. Link Processing: PDF Redirect & New Tab
+      // We scan all links generated by the Markdown parser
+      const links = contentArea.querySelectorAll('a');
+      links.forEach(link => {
+        const href = link.getAttribute('href');
+
+        // Check if the link target is a PDF
+        if (href && href.toLowerCase().endsWith('.pdf')) {
+          // Get the base filename (e.g., 'Group_Contagion.pdf')
+          const pdfFileName = href.split('/').pop();
+
+          // Redirect path to your dedicated 'papers' folder
+          link.setAttribute('href', `./papers/${pdfFileName}`);
+
+          // Force open in a new web tab
+          link.setAttribute('target', '_blank');
+
+          // Security best practice for opening new tabs
+          link.setAttribute('rel', 'noopener noreferrer');
+        }
+      });
+
+      // 4. Render LaTeX for your mathematical derivations
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+
+    } catch (error) {
+      console.error("Loading Error:", error);
+      document.getElementById('post-title').innerText = "404: Not Found";
+    }
+  }
+  window.onload = loadAndRenderPost;
+</script>
+</body>
+</html>
