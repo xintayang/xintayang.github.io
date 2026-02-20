@@ -118,7 +118,7 @@
     if (!fileName) return;
 
     try {
-      const response = await fetch(`./posts/${fileName}`);
+      const response = await fetch(`/posts/${fileName}`);
       const rawText = await response.text();
 
       // 1. Metadata and Body Extraction
