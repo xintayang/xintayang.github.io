@@ -1,6 +1,6 @@
 ---
 title: Group Survival Probability under Contagion in Microlending
-date: 2024-05-01 23:59:27
+date: 2026-02
 katex: true
 post_asset_folder: true
 hide: true
