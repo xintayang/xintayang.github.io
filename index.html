@@ -80,11 +80,30 @@
             color: #cccccc; /* A light gray hex code */
             opacity: 1;
         }
+
+        /* Mobile size (default) */
+        .hero-glow {
+            width: 600px;
+            height: 600px;
+            top: -200px;
+            left: -200px;
+            background: radial-gradient(circle, rgba(253, 196, 53, 0.25) 0%, rgba(253, 196, 53, 0.08) 45%, transparent 70%);
+        }
+
+        /* Wide screen size (laptops/desktops) */
+        @media (min-width: 1024px) {
+            .hero-glow {
+                width: 1000px;
+                height: 1000px;
+                top: -400px;
+                left: -350px;
+            }
+        }
     </style>
 </head>
 <body class="relative min-h-screen bg-[#F5F5F4] overflow-x-hidden font-sans text-brand-dark flex flex-col selection:bg-brand-yellow selection:text-white">
 
-<div class="absolute -top-20 -left-20 w-96 h-96 bg-brand-yellow/15 rounded-full blur-[100px] -z-10"></div>
+<div class="absolute z-0 pointer-events-none hero-glow"></div>
 
 <div id="menu-backdrop" class="fixed inset-0 z-[50] bg-white/10 backdrop-blur-sm hidden-element transition-all duration-500"></div>
 
@@ -401,6 +420,12 @@
     });
     document.querySelectorAll('.mobile-link').forEach(link => {
         link.addEventListener('click', closeMobileMenu);
+    });
+    // Reset menu state if page is restored from browser history (bfcache)
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            closeMobileMenu();
+        }
     });
 </script>
 </body>
