@@ -130,7 +130,10 @@
     <div class="hidden md:flex md:w-[45%] flex-col items-end">
         <div class="relative flex flex-col items-end w-full">
             <div id="portrait-container" class="portrait-blob overflow-hidden shadow-2xl md:translate-x-6 bg-white/20 backdrop-blur-sm 2xl:max-w-lg">
-                <img id="portrait-img" src="./images/id.png" alt="Portrait" class="max-h-[45vh] md:max-h-[55vh] w-auto h-auto object-cover">
+                <picture>
+                    <source media="(min-width: 768px)" srcset="./images/id.png">
+                    <img id="portrait-img" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Portrait" class="max-h-[45vh] md:max-h-[55vh] w-auto h-auto object-cover">
+                </picture>
             </div>
             <p class="text-brand-gray text-[9px] mt-4 mr-4 font-medium uppercase tracking-[0.2em] opacity-60">
                 Gemini AI Transformed Picture of Me
@@ -369,7 +372,7 @@
                                 <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
                                 <span class="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-yellow-dark">Bulletin 0${i+1}</span>
                             </div>
-                            <h3 class="font-serif text-3xl md:text-4xl font-bold mb-6 text-brand-dark leading-tight">${title}</h3>
+                            <h3 class="font-display text-3xl md:text-4xl font-bold mb-6 text-brand-dark leading-tight">${title}</h3>
                             <p class="text-brand-gray leading-relaxed text-base md:text-lg">${content.replace(/\n/g, '<br>')}</p>
                         </div>
                         ${link ? `
@@ -392,7 +395,13 @@
             } catch (e) { console.warn("Parser error:", announcementFiles[i]); }
         }
     }
-    loadAnnouncements();
+    window.addEventListener('DOMContentLoaded', () => {
+        // You can even wrap this in a setTimeout of 100ms to let the UI paint first
+        setTimeout(loadAnnouncements, 100);
+    });
+    document.querySelectorAll('.mobile-link').forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
 </script>
 </body>
 </html>
