@@ -79,13 +79,13 @@
         }
     </style>
 </head>
-<body class="bg-[#F5F5F4] font-sans text-[#25282B] min-h-screen p-6 md:p-20">
+<body class="bg-[#F5F5F4] font-sans text-brand-dark min-h-screen p-6 md:p-20">
 
 <div class="max-w-7xl mx-auto mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
     <header class="text-center md:text-left">
         <a href="index.html"
            onclick="if(history.length > 1) { history.back(); return false; }"
-           class="text-[#D9A31A] font-bold hover:opacity-80 transition-opacity">
+           class="text-brand-yellow-dark font-bold hover:opacity-80 transition-opacity">
             ← Back to Homepage
         </a>
         <h1 class="font-display font-normal text-5xl mt-4 tracking-tight">Post Archive</h1>
@@ -94,13 +94,13 @@
     <div class="relative z-50 w-full md:w-80">
         <div class="relative group">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-                <i data-lucide="search" class="h-5 w-5 text-gray-400 group-focus-within:text-[#D9A31A] transition-colors"></i>
+                <i data-lucide="search" class="h-5 w-5 text-gray-400 group-focus-within:text-brand-yellow-dark transition-colors"></i>
             </div>
             <input
                     type="text"
                     id="tag-search-input"
                     placeholder="Filter by tag..."
-                    class="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur-md border border-white/50 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#D9A31A]/50 focus:bg-white/80 transition-all duration-300 cursor-pointer placeholder-gray-400 hover:placeholder-gray-600 text-gray-800 relative z-0"
+                    class="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur-md border border-white/50 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow-dark/50 focus:bg-white/80 transition-all duration-300 cursor-pointer placeholder-gray-400 hover:placeholder-gray-600 text-gray-800 relative z-0"
                     autocomplete="off"
                     readonly
             >
@@ -135,11 +135,13 @@
     });
 
     async function init() {
-        const container = document.getElementById('posts-container');
         for (const fileName of postFiles) {
             try {
                 const response = await fetch(POSTS_DIRECTORY + fileName);
-                if (!response.ok) throw new Error(`Could not fetch ${fileName}`);
+                if (!response.ok) {
+                    console.error(`Could not fetch ${fileName}: ${response.statusText}`);
+                    continue;
+                }
                 const text = await response.text();
 
                 // Standard fields
@@ -147,9 +149,6 @@
                 const date = text.match(/date:\s*([\d-]+)/)?.[1] || "No Date";
                 const excerpt = text.match(/excerpt:\s*([\s\S]*?)(?=\n\S|---)/)?.[1]?.trim() || "No excerpt available.";
 
-                // --- FIX STARTS HERE ---
-
-                // Old Regex (Buggy): /(?=\n\S|---)/ stopped at hyphens.
                 // New Regex: Stops only at lines starting with a Key (Word:) or End of Block (---)
                 const tagsBlockMatch = text.match(/tags:\s*([\s\S]*?)(?=\n\s*[a-zA-Z0-9_-]+:|---)/);
 
@@ -160,7 +159,6 @@
                         .filter(l => l.startsWith('-'))         // Find lines starting with "-"
                         .map(l => l.replace(/^-\s*/, '').trim()); // Cleanly remove the "-" and spaces
                 }
-                // --- FIX ENDS HERE ---
 
                 tags.forEach(t => allTags.add(t));
 
@@ -194,7 +192,7 @@
         postsToRender.forEach(post => {
             const card = document.createElement('div');
             card.className = 'post-card';
-            card.onclick = (e) => {
+            card.onclick = () => {
                 const dropdown = document.getElementById('tags-dropdown');
                 // If the dropdown is visible, ignore the click so we don't navigate.
                 // The event will bubble up to the document listener and close the dropdown.
