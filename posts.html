@@ -49,10 +49,13 @@
             opacity: 1;
         }
 
-        .post-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.1);
-            z-index: 10;
+        /* Only apply hover on screens 768px+, AND only when dropdown is closed */
+        @media (min-width: 768px) {
+            body:not(.dropdown-open) .post-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.1);
+                z-index: 10;
+            }
         }
 
         .tag-pill {
@@ -240,11 +243,13 @@
         input.addEventListener('click', (e) => {
             e.stopPropagation();
             dropdown.classList.toggle('hidden');
+            document.body.classList.toggle('dropdown-open');
         });
 
         document.addEventListener('click', (e) => {
             if (!input.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.classList.add('hidden');
+                document.body.classList.remove('dropdown-open');
             }
         });
     }
@@ -266,6 +271,7 @@
         currentFilter = tag;
         input.value = '';
         dropdown.classList.add('hidden');
+        document.body.classList.remove('dropdown-open');
 
         if (tag === 'All Posts') {
             renderPosts(allPostsData);
