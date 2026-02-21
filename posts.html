@@ -191,7 +191,15 @@
         postsToRender.forEach(post => {
             const card = document.createElement('div');
             card.className = 'post-card';
-            card.onclick = () => window.location.href = `post-detail.html?post=${post.fileName}`;
+            card.onclick = (e) => {
+                const dropdown = document.getElementById('tags-dropdown');
+                // If the dropdown is visible, ignore the click so we don't navigate.
+                // The event will bubble up to the document listener and close the dropdown.
+                if (!dropdown.classList.contains('hidden')) {
+                    return;
+                }
+                window.location.href = `post-detail.html?post=${post.fileName}`;
+            }
 
             card.innerHTML = `
             <div class="card-inner">
