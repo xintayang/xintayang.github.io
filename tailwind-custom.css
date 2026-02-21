@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+    /* Brand Colors */
+    --color-brand-yellow: #FDC435;
+    --color-brand-yellow-dark: #D9A31A;
+    --color-brand-dark: #25282B;
+    --color-brand-gray: #828282;
+    --color-brand-lightgray: #8282829A;
+
+    /* Font Mapping */
+    --font-sans: "Nunito", sans-serif;
+    --font-serif: "Georgia", serif;
+    --font-display: "Cormorant Garamond", serif;
+}
